@@ -6,7 +6,6 @@ This repository contains a collection of offensive security tools developed for 
 
 - [Tools Included](#tools-included)
 - [Installation and Usage](#installation-and-usage)
-- [Contributing](#contributing)
 - [Acknowledgments](#acknowledgments)
 - [License](#license)
 
@@ -25,10 +24,6 @@ This repository contains a collection of offensive security tools developed for 
 ## Installation and Usage
 
 Each tool may have different requirements and usage instructions. Refer to the individual README files in each tool's directory for specific instructions.
-
-## Contributing
-
-Contributions to enhance these tools are welcome. Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines on how to contribute to this project.
 
 ## Acknowledgments
 
