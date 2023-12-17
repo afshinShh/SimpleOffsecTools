@@ -11,8 +11,8 @@ This repository contains a collection of offensive security tools developed for 
 
 ## Tools Included
 
-1. **FTP Bruteforcer** using asynchronous Programming
-2. **Directory Buster** using asynchronous programming
+1. **FTP Bruteforcer**
+2. **Directory Buster** 
 3. **Arp Spoofing/Poisoning Script**
 4. **Multithreaded Network Scanner**
 5. **Recursive Web Crawler**
@@ -27,9 +27,7 @@ Each tool may have different requirements and usage instructions. Refer to the i
 
 ## Acknowledgments
 
-A significant portion of the tools in this repository were inspired by various blog posts found in this [thread](https://hacklido.com/lists/5) on Hacklido. The ideas and concepts presented in these posts served as a foundation upon which these tools were built and improved.
-
-In addition to the aforementioned source, inspiration was also drawn from various other online resources and blogs. Due to the myriad of sources and continuous development, it is challenging to attribute each idea to its original source. Therefore, a collective acknowledgment is made here to all those unnamed developers and writers whose ideas have contributed to these tools.
+A significant portion of the tools in this repository were inspired by various blog posts found in [Hacklido](https://hacklido.com/), [Medium](https://medium.com/), [Twitter](https://twitter.com/), [GitHub](https://github.com/). In addition to the aforementioned sources, inspiration was also drawn from various other online resources and blogs. Due to the myriad of sources and continuous development, it is challenging to attribute each idea to its original source. Therefore, a collective acknowledgment is made here to all those unnamed developers and writers whose ideas have contributed to these tools.
 
 ## License
 
