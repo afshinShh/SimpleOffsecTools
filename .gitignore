@@ -130,3 +130,6 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+## venv folder in my local machine
+env/
