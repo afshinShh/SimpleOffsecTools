@@ -31,4 +31,4 @@ A significant portion of the tools in this repository were inspired by various b
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
