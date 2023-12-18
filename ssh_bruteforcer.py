@@ -1,17 +1,26 @@
 """Async SSH bruteforce tool
 
-Performs asynchronous dictionary-based bruteforce attacks against SSH servers. 
-Spins up multiple threads, each running an event loop to concurrently try 
-passwords from a wordlist against the target. 
+This tool performs asynchronous dictionary-based bruteforce attacks against 
+SSH servers. It supports specifying target host, port, username and wordlist.
+The tool utilizes asyncio for asynchronous concurrency and runs bruteforce 
+attempts in parallel for faster results.
 
-Uses asyncio coroutines and tasks for asynchronous execution. As soon as one 
-task finds the valid password, it cancels the remaining tasks.
+Usage:
+  ssh_bruteforcer.py [-h] [-n NAME] [-p PORT] [-u USERNAME] -w WORDLIST target
 
-Arguments:
-    target: IP address or hostname of the SSH server
-    port: SSH port number (default 22)
-    username: Username to bruteforce
-    wordlist: Path to password wordlist
+  positional arguments:
+    target                Host to attack e.g. 192.168.1.1
+
+  optional arguments:
+  -h, --help            show this help message and exit
+  -n NAME, --name NAME
+  -p PORT, --port PORT
+  -w WORDLIST, --wordlist WORDLIST
+  -u USERNAME, --user USERNAME
+                        Username which we want to bruteforce to
+                          
+Example:
+  python ssh_bruteforcer.py 192.168.1.1 -u root -w passwords.txt
     
 """
 
