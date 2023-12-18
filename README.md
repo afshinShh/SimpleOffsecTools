@@ -23,7 +23,7 @@ This repository contains a collection of offensive security tools developed for 
 
 ## Installation and Usage
 
-Each tool may have different requirements and usage instructions. Refer to the individual README files in each tool's directory for specific instructions.
+Refer to the docstrings and comments within each file for usage instructions.
 
 ## Acknowledgments
 
