@@ -20,6 +20,7 @@ This repository contains a collection of offensive security tools developed for 
 7. **PDF Password Brute Forcer**
 8. **Hash Cracker**
 9. **Reverse Shell**
+10. **Some recon scripts**
 
 ## Installation and Usage
 
@@ -32,3 +33,4 @@ A significant portion of the tools in this repository were inspired by various b
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
