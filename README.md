@@ -11,7 +11,7 @@ This repository contains a collection of offensive security tools developed for 
 
 ## Tools Included
 
-1. **FTP Bruteforcer**
+1. **SSH/FTP Bruteforcer**
 2. **Directory Buster** 
 3. **Arp Spoofing/Poisoning Script**
 4. **Multithreaded Network Scanner**
