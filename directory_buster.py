@@ -192,7 +192,32 @@ class DirBruteforcer():
         return True
     
     async def print_and_save_output(self, status_code, response_length, url, title):
-        pass
+        status_code = int(status_code)
+        color = 'grey'
+        if status_code >= 200 and status_code < 300:
+            color = 'green'
+        elif status_code >= 300 and status_code < 400:
+            color = 'yellow'
+        elif status_code >= 400 and status_code < 500:
+            color = 'red'
+        elif status_code > 500 and status_code < 600:
+            color = 'magenta'
+
+        status_code_str = str(status_code).ljust(9, " ")
+        response_length_str = str(response_length).ljust(9)
+        url_str = url.ljust(30)
+
+        output = f"{colored(status_code_str, color)} {response_length_str} {url_str}"
+
+        if not self.hide_title:
+            output += f" [{title}]"
+
+        print(output)
+
+        if self.outputfile:
+            with open(self.outputfile, 'a+') as f:
+                f.write(
+                    f"{status_code_str} {response_length_str} {url_str} [{title}]")
 
     
 if __name__ == "__main__":
