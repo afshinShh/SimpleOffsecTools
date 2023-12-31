@@ -73,7 +73,6 @@ class DirBruteforcer():
         self.outputfile = outputfile
         self.hide_title = hide_title        
         
-    
     def print_banner(self):
         from datetime import datetime
         print("-"*80)
@@ -143,10 +142,59 @@ class DirBruteforcer():
         except Exception as e:
             print(f"Unexpected Error: {e}")
             exit(1)          
+        
+    async def brute_dir(self, word, session):
+        try:
+            url = f"{self.target}{word}"
+            async with session.get(url) as response:
+                html = await response.text()
+
+            response_length = str(len(html))
+            status_code = str(response.status)
+            url = url.split('://')[1]
+            soup = BeautifulSoup(html, 'html.parser')
+            title = soup.title.string if soup.title else []
+
+            if await self.check_conditions(status_code, response_length):
+                await self.print_and_save_output(status_code, response_length, url, title)
+
+        except aiohttp.ClientError as err:
+            print(f'An error occurred during the HTTP request: {str(err)}')
+        
+        except KeyboardInterrupt:
+            print("Process interrupted by keyboard")
+            exit(0)
+        
+        except Exception as err:
+            print(f"An unexpected error occurred: {err}")
+            exit(1)
+
+    async def check_conditions(self, status_code, response_length):
+        if self.match_codes:
+            if status_code not in self.match_codes:
+                return False
+            if self.filter_size and response_length not in self.filter_size:
+                return False
+            if self.match_size and response_length not in self.match_size:
+                return False
+        elif self.filter_codes:
+            if status_code in self.filter_codes:
+                return False
+            if self.filter_size and response_length not in self.filter_size:
+                return False
+            if self.match_size and response_length not in self.match_size:
+                return False
+        else:
+            if self.filter_size and response_length not in self.filter_size:
+                return False
+            if self.match_size and response_length not in self.match_size:
+                return False
+        return True
     
-    
-    async def brute_dir(self,word,session):
+    async def print_and_save_output(self, status_code, response_length, url, title):
         pass
+
+    
 if __name__ == "__main__":
     
     arguments = get_args()
