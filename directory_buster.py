@@ -114,8 +114,39 @@ class DirBruteforcer():
         print("-"*80)
             
     async def main(self):
-        pass
+        try:
+            tasks = []
+            dirs = []
+            
+            with open (self.wordlist, "r") as f:
+                for word in f.readlines():
+                    word = word.strip()
+                    dirs.append(f'/{word}')
+                    if self.extensions:
+                        for ext in self.extensions:
+                            dirs.append(f'/{word}.{ext}')
+            
+            async with aiohttp.ClientSession(headers=self.headers) as session:
+                for dir in dirs:
+                    tasks.append(asyncio.create_task(
+                        self.brute_dir(word=dir, session=session)))
+                    if len(tasks) >= 50:
+                        await asyncio.gather(*tasks)
+                        
+        except aiohttp.ClientError as e:
+            print(f"An error occurred during the HTTP request: {str(e)}")
         
+        except KeyboardInterrupt:
+            print("Process interrupted by keyboard")
+            exit(0)
+        
+        except Exception as e:
+            print(f"Unexpected Error: {e}")
+            exit(1)          
+    
+    
+    async def brute_dir(self,word,session):
+        pass
 if __name__ == "__main__":
     
     arguments = get_args()
