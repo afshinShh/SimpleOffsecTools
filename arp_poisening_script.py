@@ -26,3 +26,32 @@ def get_args():
         sys.exit(1) 
     return arguments
 
+def get_mac_addr(ip):
+    pass
+
+def poisening(victimIP, victimMac, gatewayIP, gatewayMac):
+    pass
+
+def sniffing(packetCount, interface):
+    pass
+
+if __name__ == "__main__":
+    arguments = get_args()
+    
+    victimIP = arguments.victimip
+    victimMac = get_mac_addr(victimIP)
+    
+    gatewayIP = arguments.gatewayip
+    gatewayMac = get_mac_addr(gatewayIP)
+    
+    interface = arguments.interface
+    packetCount = arguments.PacketCount
+    
+    print_banner(victimIP, victimMac, gatewayIP, gatewayMac, interface)
+    
+    poisening_process = Process(target=poisening, args=(victimIP, victimMac, gatewayIP, gatewayMac))
+    poisening_process.start()
+    
+    if arguments.sniff:
+        sniffing_process = Process(target=sniffing, args=(packetCount, interface))
+        sniffing_process.start()
