@@ -11,8 +11,8 @@ This repository contains a collection of offensive security tools developed for 
 
 ## Tools Included
 
-1. **SSH/FTP Bruteforcer**
-2. **Directory Buster** 
+1. **Asynchronous SSH/FTP Bruteforcer**
+2. **Asynchronous Directory Buster** 
 3. **Arp Spoofing/Poisoning Script**
 4. **Multithreaded Network Scanner**
 5. **Recursive Web Crawler**
@@ -20,7 +20,7 @@ This repository contains a collection of offensive security tools developed for 
 7. **PDF Password Brute Forcer**
 8. **Hash Cracker**
 9. **Reverse Shell**
-10. **Reconnaissance Script**
+10. **Bug Bounty Reconnaissance Script**
 
 ## Installation and Usage
 
