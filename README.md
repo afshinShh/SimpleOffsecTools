@@ -20,7 +20,7 @@ This repository contains a collection of offensive security tools developed for 
 7. **PDF Password Brute Forcer**
 8. **Hash Cracker**
 9. **Reverse Shell**
-10. **Some recon scripts**
+10. **Reconnaissance Script**
 
 ## Installation and Usage
 
