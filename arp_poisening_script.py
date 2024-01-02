@@ -42,7 +42,59 @@ def print_banner(victimIp, victimMac, gatewayIp, gatewayMac):
 
 
 def get_mac_addr(ip):
-    pass
+    
+    '''
+        an example:
+    
+    ARP Request Frame Details:
+        ###[ ARP ]###
+    hwtype    = 0x1
+    ptype     = 0x800
+    hwlen     = 6
+    plen      = 4
+    op        = who-has
+    hwsrc     = 00:00:00:00:00:00
+    psrc      = 0.0.0.0
+    hwdst     = 00:00:00:00:00:00
+    pdst      = 192.168.1.1
+
+    Ethernet Frame Details:
+    ###[ Ethernet ]###
+    dst       = ff:ff:ff:ff:ff:ff
+    src       = 00:00:00:00:00:00
+    type      = 0x0
+
+    Constructed ARP Ether Packet:
+    ###[ Ethernet ]###
+    dst       = ff:ff:ff:ff:ff:ff
+    src       = 00:00:00:00:00:00
+    type      = 0x806
+    ###[ ARP ]###
+        hwtype    = 0x1
+        ptype     = 0x800
+        hwlen     = 6
+        plen      = 4
+        op        = who-has
+        hwsrc     = 00:00:00:00:00:00
+        psrc      = 0.0.0.0
+        hwdst     = 00:00:00:00:00:00
+        pdst      = 192.168.1.1
+        
+    hwtype: Hardware type, indicating the type of hardware being used.
+    ptype: Protocol type, specifying the type of protocol addresses used in the ARP message
+    hwlen: Length of hardware addresses in bytes.
+    plen: Length of protocol addresses in bytes. 
+    op: Opcode, indicating the type of ARP message. (1=>Arp request / 2=>Arp Reply / 3=>Rarp request)
+    hwsrc: Source hardware (MAC) address.
+    psrc: Source protocol (IP) address.
+    hwdst: Destination hardware (MAC) address.
+    pdst: Destination protocol (IP) address.
+    '''
+    arp_request_frame = scapy.ARP(pdst=ip)
+    ether_broadcast_frame = scap.Ether(dst="ff:ff:ff:ff:ff:ff")
+    arp_ether_send_packet = ether_broadcast_frame / arp_request_frame
+    response_packet = scapy.src(arp_ether_send_packet, timeout=1, retry=10, verbose=False)[0]
+    return response_packet[0][1].hwsrc
 
 def poisening(victimIP, victimMac, gatewayIP, gatewayMac):
     pass
