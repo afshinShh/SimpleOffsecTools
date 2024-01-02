@@ -26,6 +26,21 @@ def get_args():
         sys.exit(1) 
     return arguments
 
+def print_banner(victimIp, victimMac, gatewayIp, gatewayMac):
+    banner_line = "-" * 60
+    timestamp = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+    arp_start_message = f"Arp Poisoning starting at {timestamp}"
+
+    print(banner_line)
+    print(colored(arp_start_message, 'cyan', attrs=['bold']))
+    print(banner_line)
+    print(f"[*] Victim IP\t: {victimIp}")
+    print(f"[*] Victim Mac\t: {victimMac}")
+    print(f"[*] Gateway Ip\t: {gatewayIp}")
+    print(f"[*] Gateway Mac\t: {gatewayMac}")
+    print(banner_line)
+
+
 def get_mac_addr(ip):
     pass
 
@@ -55,3 +70,4 @@ if __name__ == "__main__":
     if arguments.sniff:
         sniffing_process = Process(target=sniffing, args=(packetCount, interface))
         sniffing_process.start()
+        
