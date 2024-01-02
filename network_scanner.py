@@ -51,3 +51,53 @@ def get_args():
         type=int,
     )
     return parser.parse_args()
+
+
+
+
+def main():
+    args = get_args()
+    host = args.target
+    start_port, end_port = map(int, args.ports.split("-"))
+    scan_type = ""
+    port_queue = Queue()
+    print(colored("-"*65, 'cyan', attrs=['dark']))
+    print(colored(
+            f"\tNetwork scanner starting at {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}", 'cyan', attrs=['dark']))
+    print(colored("-"*65, 'cyan', attrs=['dark']))
+
+    if args.arp:
+        print(colored("-"*50,'light_red'))
+        print(colored("\tARP Ping Scan Results",'light_red'))
+        print(colored("-"*50,'light_red'))
+        print(colored("="*30,'black'))
+        print(colored("\tPort\tState",'black',attrs=['bold']))
+        print(colored("="*30,'black'))
+        arp_ping(host)
+        
+    if ((args.tcpPortScan)or(args.udpPortScan)):
+        print(colored("-"*50,'light_red'))
+        if args.tcpPortScan:
+            print(colored("\tTCP Port Scan Results",'light_red'))
+            scan_type="T"
+        elif (args.udpPortScan):
+            print(colored("\tUDP Port Scan Results",'light_red'))
+            scan_type="U"
+        print(colored("-"*50,'light_red'))
+        print()
+        print(colored("="*30,'dark_grey'))
+        print(colored("\tPort\tState",'dark_grey',attrs=['bold']))
+        print(colored("="*30,'dark_grey'))
+        
+        
+        for port in range(start_port, end_port + 1):
+            port_queue.put(port)
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=args.threads
+        ) as executor:
+            for _ in range(args.threads):
+                executor.submit(scan_thread, host, scan_type, port_queue)
+        port_queue.join()
+
+if __name__ == "__main__":
+    main()
