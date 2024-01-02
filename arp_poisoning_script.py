@@ -3,7 +3,7 @@ import argparse
 import time
 from datetime import datetime
 from termcolor import colored
-from scapy.all import scapy
+import scapy.all as scapy
 from multiprocessing import Process
 
 def get_args():
