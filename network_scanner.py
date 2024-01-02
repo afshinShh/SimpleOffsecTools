@@ -55,49 +55,79 @@ def get_args():
 
 
 
+
 def main():
+    ###################################################################################3
     args = get_args()
     host = args.target
     start_port, end_port = map(int, args.ports.split("-"))
-    scan_type = ""
-    port_queue = Queue()
-    print(colored("-"*65, 'cyan', attrs=['dark']))
-    print(colored(
-            f"\tNetwork scanner starting at {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}", 'cyan', attrs=['dark']))
-    print(colored("-"*65, 'cyan', attrs=['dark']))
+    print_network_scanner_start()
 
     if args.arp:
-        print(colored("-"*50,'light_red'))
-        print(colored("\tARP Ping Scan Results",'light_red'))
-        print(colored("-"*50,'light_red'))
-        print(colored("="*30,'black'))
-        print(colored("\tPort\tState",'black',attrs=['bold']))
-        print(colored("="*30,'black'))
+        print_arp_ping_scan_results()
         arp_ping(host)
-        
-    if ((args.tcpPortScan)or(args.udpPortScan)):
-        print(colored("-"*50,'light_red'))
+
+    if args.tcpPortScan or args.udpPortScan:
+        scan_type = determine_scan_type(args)
+        print_port_scan_results_header(scan_type)
+        execute_port_scan_threads(args, host, scan_type, start_port, end_port)
+    ###################################################################################3
+    
+    def print_network_scanner_start():
+        print_section_separator()
+    print_colored_header(f"Network scanner starting at {get_current_time()}")
+    print_section_separator()
+
+    def print_section_separator():
+        print(colored("-" * 65, 'cyan', attrs=['dark']))
+
+    def print_colored_header(text):
+        print(colored(f"\t{text}", 'cyan', attrs=['dark']))
+
+    def get_current_time():
+        return datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+
+    def print_arp_ping_scan_results():
+        print_section_separator_light_red()
+        print(colored("\tARP Ping Scan Results", 'light_red'))
+        print_section_separator_light_red()
+        print_port_state_header()
+
+    def print_section_separator_light_red():
+        print(colored("-" * 50, 'light_red'))
+
+    def print_port_state_header():
+        print(colored("=" * 30, 'black'))
+        print(colored("\tPort\tState", 'black', attrs=['bold']))
+        print(colored("=" * 30, 'black'))
+
+    def determine_scan_type(args):
         if args.tcpPortScan:
-            print(colored("\tTCP Port Scan Results",'light_red'))
-            scan_type="T"
-        elif (args.udpPortScan):
-            print(colored("\tUDP Port Scan Results",'light_red'))
-            scan_type="U"
-        print(colored("-"*50,'light_red'))
+            return "T"
+        elif args.udpPortScan:
+            return "U"
+
+    def print_port_scan_results_header(scan_type):
+        print_section_separator_light_red()
+        print(colored(f"\t{scan_type} Port Scan Results", 'light_red'))
+        print_section_separator_light_red()
         print()
-        print(colored("="*30,'dark_grey'))
-        print(colored("\tPort\tState",'dark_grey',attrs=['bold']))
-        print(colored("="*30,'dark_grey'))
-        
-        
-        for port in range(start_port, end_port + 1):
-            port_queue.put(port)
-        with concurrent.futures.ThreadPoolExecutor(
-            max_workers=args.threads
-        ) as executor:
+        print(colored("=" * 30, 'dark_grey'))
+        print(colored("\tPort\tState", 'dark_grey', attrs=['bold']))
+        print(colored("=" * 30, 'dark_grey'))
+
+    def execute_port_scan_threads(args, host, scan_type, start_port, end_port):
+        port_queue = prepare_port_queue(start_port, end_port)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
             for _ in range(args.threads):
                 executor.submit(scan_thread, host, scan_type, port_queue)
         port_queue.join()
 
+    def prepare_port_queue(start_port, end_port):
+        port_queue = Queue()
+        for port in range(start_port, end_port + 1):
+            port_queue.put(port)
+        return port_queue
+            
 if __name__ == "__main__":
     main()
