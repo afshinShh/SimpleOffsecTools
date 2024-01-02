@@ -106,6 +106,14 @@ def poisening(victimIP, victimMac, gatewayIP, gatewayMac):
     print(colored("[+] Sending ARP poison packets to the victim and gateway", 'yellow', attrs=['bold']))
     print("-" * 60)
     
+    def restore():
+        print(colored("[+] Getting back to normal state!", 'green', attrs=['bold']))
+        normal_victim_packet = scapy.ARP(psrc=gatewayIP, hwsrc=gatewayMac, pdst=victimIP, hwdst="ff:ff:ff:ff:ff:ff", op=2)
+        normal_gateway_packet = scapy.ARP(psrc=victimIP, hwsrc=victimMac, pdst=gatewayIP, hwdst="ff:ff:ff:ff:ff:ff", op=2)
+        for i in range(7):
+            scapy.send(normal_victim_packet, verbose=False)
+            scapy.send(normal_gateway_packet, verbose=False)
+            
     while True:
         sys.stdout.flush()
         try:
