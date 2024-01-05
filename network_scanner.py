@@ -56,47 +56,19 @@ def get_args():
 
 
 
-def main():
-    ###################################################################################3
-    args = get_args()
-    host = args.target
-    start_port, end_port = map(int, args.ports.split("-"))
-    print_network_scanner_start()
-
-    if args.arp:
-        print_arp_ping_scan_results()
-        arp_ping(host)
-
-    if args.tcpPortScan or args.udpPortScan:
-        scan_type = determine_scan_type(args)
-        print_port_scan_results_header(scan_type)
-        execute_port_scan_threads(args, host, scan_type, start_port, end_port)
-    ###################################################################################3
-    
+def main():    
     def print_network_scanner_start():
-        print_section_separator()
-    print_colored_header(f"Network scanner starting at {get_current_time()}")
-    print_section_separator()
-
-    def print_section_separator():
         print(colored("-" * 65, 'cyan', attrs=['dark']))
-
-    def print_colored_header(text):
-        print(colored(f"\t{text}", 'cyan', attrs=['dark']))
+        print(colored(f"\tNetwork scanner starting at {get_current_time()}", 'cyan', attrs=['dark']))
+        print(colored("-" * 65, 'cyan', attrs=['dark']))
 
     def get_current_time():
         return datetime.now().strftime('%d/%m/%Y %H:%M:%S')
 
     def print_arp_ping_scan_results():
-        print_section_separator_light_red()
-        print(colored("\tARP Ping Scan Results", 'light_red'))
-        print_section_separator_light_red()
-        print_port_state_header()
-
-    def print_section_separator_light_red():
         print(colored("-" * 50, 'light_red'))
-
-    def print_port_state_header():
+        print(colored("\tARP Ping Scan Results", 'light_red'))
+        print(colored("-" * 50, 'light_red'))
         print(colored("=" * 30, 'black'))
         print(colored("\tPort\tState", 'black', attrs=['bold']))
         print(colored("=" * 30, 'black'))
@@ -108,9 +80,9 @@ def main():
             return "U"
 
     def print_port_scan_results_header(scan_type):
-        print_section_separator_light_red()
+        print(colored("-" * 50, 'light_red'))
         print(colored(f"\t{scan_type} Port Scan Results", 'light_red'))
-        print_section_separator_light_red()
+        print(colored("-" * 50, 'light_red'))
         print()
         print(colored("=" * 30, 'dark_grey'))
         print(colored("\tPort\tState", 'dark_grey', attrs=['bold']))
@@ -128,6 +100,26 @@ def main():
         for port in range(start_port, end_port + 1):
             port_queue.put(port)
         return port_queue
-            
+    
+    def scan_thread(host, scan_type, port_queue):
+        pass
+    
+    def arp_ping(host):
+        pass
+    ###################################################################################
+    args = get_args()
+    host = args.target
+    start_port, end_port = map(int, args.ports.split("-"))
+    print_network_scanner_start()
+
+    if args.arp:
+        print_arp_ping_scan_results()
+        arp_ping(host)
+
+    if args.tcpPortScan or args.udpPortScan:
+        scan_type = determine_scan_type(args)
+        print_port_scan_results_header(scan_type)
+        execute_port_scan_threads(args, host, scan_type, start_port, end_port)
+    ###################################################################################           
 if __name__ == "__main__":
     main()
