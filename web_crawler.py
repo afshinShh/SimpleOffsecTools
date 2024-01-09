@@ -2,6 +2,7 @@ import requests
 import argparse
 from termcolor import colored
 from bs4 import BeautifulSoup
+import re
 from datetime import datetime
 from urllib.parse import urljoin
 
