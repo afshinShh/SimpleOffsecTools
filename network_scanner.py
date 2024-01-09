@@ -1,5 +1,6 @@
 from datetime import datetime
 import argparse
+import queue
 import socket
 import re
 import concurrent.futures
@@ -102,7 +103,27 @@ def main():
         return port_queue
     
     def scan_thread(host, scan_type, port_queue):
-        pass
+        while True:
+            try:
+                port = port_queue.get_nowait()
+                port_scan(port, host, scan_type)
+                port_queue.task_done()
+            except queue.Empty:
+                break
+    
+    def port_scan(port, host, scan_type):
+        socket_type = socket.SOCK_STREAM if scan_type == "T" else socket.SOCK_DGRAM    
+        try:
+            client = socket.socket(socket.AF_INET, socket_type)
+            client.settimeout(0.5)
+            client.connect((host, port))
+            print(f"[*]\t{port}\tis Open")
+            client.close()
+        except KeyboardInterrupt:
+            print(colored("[-] Keyboard interrupt detected, exiting!",'red', attrs=['bold']))
+            exit(1)
+        except:
+            pass
     
     def arp_ping(ip):
         # only Valid IPv4 Addresses
