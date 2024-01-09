@@ -1,3 +1,34 @@
+"""
+Network Scanner Tool: Python utility for network scanning using socket, scapy, and concurrent.futures libraries.
+
+Features:
+- ARP Ping Scan: Discover active hosts and their MAC addresses.
+- TCP Port Scan: Identifies open TCP ports using multithreading -> for accelerated scanning.
+- UDP Port Scan: Detects open UDP ports using multithreading -> for swifter scanning.
+- Customizable Port Range and Threads: Adjust port ranges and thread counts.
+
+Requirements:
+    pip install scapy
+
+Supported arguments:
+- target: Target URL or IP address (required).
+- -arp: Perform ARP ping (optional).
+- -pT: Perform TCP port scanning (optional).
+- -pU: Perform UDP port scanning (optional).
+- -p or --ports: Specify port range to scan (default: 1-65535).
+- -t or --threads: Number of threads (default: 100).
+
+
+Examples:
+1. Perform ARP ping scan on a specific IP address range:
+       python network_scanner.py 192.168.1.0/24 -arp
+
+2. Perform TCP port scan on a target IP with custom port range and 50 threads:
+   python network_scanner.py 192.168.1.100 -pT -p 1-100 -t 50
+
+3. Perform UDP port scan on a target IP with default port range and 75 threads:
+   python network_scanner.py 10.0.0.1 -pU -t 75
+"""
 from datetime import datetime
 import argparse
 import queue
@@ -58,6 +89,8 @@ def get_args():
 
 
 def main():    
+    # Functions to print specific messages and results
+            
     def print_network_scanner_start():
         print(colored("-" * 65, 'cyan', attrs=['dark']))
         print(colored(f"\tNetwork scanner starting at {get_current_time()}", 'cyan', attrs=['dark']))
@@ -89,6 +122,7 @@ def main():
         print(colored("\tPort\tState", 'dark_grey', attrs=['bold']))
         print(colored("=" * 30, 'dark_grey'))
 
+    # Executes port scanning using threads
     def execute_port_scan_threads(args, host, scan_type, start_port, end_port):
         port_queue = prepare_port_queue(start_port, end_port)
         with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
@@ -96,12 +130,14 @@ def main():
                 executor.submit(scan_thread, host, scan_type, port_queue)
         port_queue.join()
 
+    # Prepares a queue of ports to be scanned
     def prepare_port_queue(start_port, end_port):
         port_queue = Queue()
         for port in range(start_port, end_port + 1):
             port_queue.put(port)
         return port_queue
     
+    # Function to scan individual ports in a thread
     def scan_thread(host, scan_type, port_queue):
         while True:
             try:
@@ -111,6 +147,7 @@ def main():
             except queue.Empty:
                 break
     
+    # Function to scan a specific port based on the scan_type provided
     def port_scan(port, host, scan_type):
         socket_type = socket.SOCK_STREAM if scan_type == "T" else socket.SOCK_DGRAM    
         try:
@@ -124,7 +161,7 @@ def main():
             exit(1)
         except:
             pass
-    
+        
     def arp_ping(ip):
         # only Valid IPv4 Addresses
         if not re.match(r"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)", ip):
