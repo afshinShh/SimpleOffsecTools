@@ -14,14 +14,37 @@ def get_args():
     return parser.parse_args()
 
 class WebCrawler:
-    def __init__(self, url, depth):
-        pass
+    def __init__(self, url, max_depth):
+        self.url = url
+        self.max_depth = max_depth
+        self.subdomains = set()
+        self.links = set()
+        self.jsfiles = set()
+        
     def print_banner(self):
-        pass
+        print("-" * 80)
+        print(colored(f"Recursive Web Crawler starting at {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}", 'cyan', attrs=['bold']))
+        print("-" * 80)
+        print(f"[*] URL".ljust(20, " "), ":", self.url)
+        print(f"[*] Max Depth".ljust(20, " "), ":", self.max_depth)
+        print("-" * 80)
+        
+    def print_results(self):
+        if self.subdomains:
+            for subdomain in self.subdomains:
+                print(f"[+] Discovered subdomain: {subdomain}")
+        print()
+        if self.links:
+            for link in self.links:
+                print(f"[+] Discovered link: {link}")
+        print()
+        if self.jsfiles:
+            for jsfile in self.jsfiles:
+                print(f"[+] Discovered JavaScript file: {jsfile}")
+            
     def start_crawling(self):
         pass
-    def print_results(self):
-        pass
+
 
 if __name__ == '__main__':
     args = get_args()
