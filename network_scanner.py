@@ -104,8 +104,23 @@ def main():
     def scan_thread(host, scan_type, port_queue):
         pass
     
-    def arp_ping(host):
-        pass
+    def arp_ping(ip):
+        # only Valid IPv4 Addresses
+        if not re.match(r"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)", ip):
+            print(colored("[-] Please provide a valid IP address range for ARP ping!",'red',attrs=['bold']))
+            exit(1)
+        try:
+            arp_request_frame = scapy.ARP(pdst=ip)
+            broadcast_frame = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")
+            broadcast_frame_arp = broadcast_frame / arp_request_frame
+            active_clients = scapy.srp(broadcast_frame_arp, timeout=2, verbose=False)[0]
+            
+            for _, reply in active_clients:
+                print(f"[+]\t{reply.psrc}\t{reply.hwsrc}")
+        except Exception as e:
+            print(colored(f"[-] {e}",'red', attrs=['bold']))
+            exit(1)
+        
     ###################################################################################
     args = get_args()
     host = args.target
