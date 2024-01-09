@@ -30,20 +30,45 @@ class WebCrawler:
         print("-" * 80)
         
     def print_results(self):
-        if self.subdomains:
-            for subdomain in self.subdomains:
-                print(f"[+] Discovered subdomain: {subdomain}")
-        print()
-        if self.links:
-            for link in self.links:
-                print(f"[+] Discovered link: {link}")
-        print()
-        if self.jsfiles:
-            for jsfile in self.jsfiles:
-                print(f"[+] Discovered JavaScript file: {jsfile}")
+        def print_discovered(name, items):
+            if items:
+                print()
+                for item in items:
+                    print(f"[+] Discovered {name.capitalize()}: {item}")
+        
+        print_discovered("subdomain", self.subdomains)
+        print_discovered("link", self.links)
+        print_discovered("JavaScript file", self.jsfiles)
             
     def start_crawling(self):
-        pass
+        self._crawl(self.url, depth=1)
+        
+    def _crawl(self, url, depth):
+        if depth > self.max_depth:
+            return
+        try:
+            response = requests.get(url, timeout=3, allow_redirects=True)
+            soup = BeautifulSoup(response.text, 'html.parser')
+        except requests.exceptions.RequestException as err:
+            print(f"[-] An error occurred: {err}")
+            return
+
+        subdomain_query = r"https?://([a-zA-Z0-9.-]+)"
+        for link in soup.find_all('a', href=True):
+            link_text = link.get('href')
+            if link_text:
+                if re.match(subdomain_query, link_text) and link_text not in self.subdomains:
+                    self.subdomains.add(link_text)
+                else:
+                    full_link = urljoin(url, link_text)
+                    if full_link != url and full_link not in self.links:
+                        self.links.add(full_link)
+                        self._crawl(full_link, depth + 1)
+
+        for file in soup.find_all('script', src=True):
+            script_src = file.get('src')
+            if script_src:
+                self.jsfiles.add(script_src)
 
 
 if __name__ == '__main__':
