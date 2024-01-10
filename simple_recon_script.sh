@@ -14,28 +14,37 @@ if [ ! -d "$DIRECTORY" ]; then
  echo "Directory $DIRECTORY has been created."
 fi
 
+nmap_scan()
+{
+    nmap $DOMAIN > $DIRECTORY/nmap.txt
+    echo "Results of nmap scanner saved in $DIRECTORY/nmap.txt."
+}
+
+dirsearch_scan()
+{
+    # export PATH="PATH_TO_DIRSEARCH:$PATH"
+    echo "\n" > $DOMAIN/dirsearch.txt
+    python3 $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php --format=simple -o $DOMAIN/dirsearch.txt
+    echo "Results of dirsearch saved in $DOMAIN/dirsearch.txt."
+}
+certscan()
+{
+    curl "https://crt.sh/?q=%25.$DOMAIN&output=json" -o $DIRECTORY/cert.txt
+    echo "Results of cert parsing is stored in $DIRECTORY/cert.txt."
+}
 case $2 in
     nmap_only)
-        nmap $DOMAIN > $DIRECTORY/nmap.txt
-        echo "Results of nmap scanner saved in $DIRECTORY/nmap.txt."
+        nmap_scan
         ;;
     dirsearch-only)
-        # export PATH="PATH_TO_DIRSEARCH:$PATH"
-        echo "\n" > $DOMAIN/dirsearch.txt
-        python3 $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php --format=simple -o $DOMAIN/dirsearch.txt
-        echo "Results of dirsearch saved in $DOMAIN/dirsearch.txt."
+        dirsearch_scan
         ;;
     cert-only)
-        curl "https://crt.sh/?q=%25.$DOMAIN&output=json" -o $DIRECTORY/cert.txt
-        echo "Results of cert parsing is stored in $DIRECTORY/cert.txt."
+        cert_scan
         ;;
     *)
-        nmap $DOMAIN > $DIRECTORY/nmap.txt
-        echo "Results of nmap scanner saved in $DIRECTORY/nmap.txt."
-        echo "\n" > $DOMAIN/dirsearch.txt
-        python3 $PATH_TO_DIRSEARCH/dirsearch.py -u $DOMAIN -e php --format=simple -o $DOMAIN/dirsearch.txt
-        echo "Results of dirsearch saved in $DOMAIN/dirsearch.txt."
-        curl "https://crt.sh/?q=%25.$DOMAIN&output=json" -o $DIRECTORY/cert.txt
-        echo "Results of cert parsing is stored in $DIRECTORY/cert.txt."
+        nmap_scan   
+        dirsearch_scan
+        cert_scan
         ;;
 esac
