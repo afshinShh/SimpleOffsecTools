@@ -55,7 +55,58 @@ def get_args():
         parser.print_help()
         exit(1)
 
+class SubdomainBruteforcer:
+    def __init__(self, target, wordlist, follow_redirect, headers, match_codes, match_size, filter_codes, filter_size, hide_title, threads):
+        self.target = target
+        self.wordlist = wordlist
+        self.follow_redirect = follow_redirect
+        self.headers = headers
+        self.hide_title = hide_title
+        self.match_codes = match_codes
+        self.match_size = match_size
+        self.filter_codes = filter_codes
+        self.filter_size = filter_size
+        self.threads = threads
+        self.q = Queue()
+        self.subdomains = []
+        
+    def print_banner(self):
+        print("-" * 80)
+        print(colored(
+            f"Subdomain Bruteforcing starting at {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}", 'cyan', attrs=['dark']))
+        print("-" * 80)
+        print(colored("[*] Target Domain".ljust(20, " "),
+                      'light_red'), ":", f"{self.target}")
+        print(colored("[*] Wordlist".ljust(20, " "),
+                      'light_red'), ":", f"{self.wordlist}")
+        if self.headers:
+            print(colored("[*] Headers".ljust(20, " "),
+                          'light_red'), ":", f"{self.headers}")
+        if self.match_size:
+            print(colored("[*] Match Res size".ljust(20, " "), 'light_red'),
+                  ":", f"{self.match_size}")
+        if self.threads:
+            print(colored("[*] Threads".ljust(20, " "), 'light_red'),
+                  ":", f"{self.threads}")
+        if self.match_codes or self.filter_codes:
+            if self.match_codes:
+                print(colored("[*] Match Codes".ljust(20, " "),
+                              'light_red'), ":", f"{self.match_codes}")
 
+            if self.filter_codes:
+                print(colored("[*] Filter Codes".ljust(20, " "), 'light_red'),
+                      ":", f"{self.filter_codes}")
+        else:
+            print(colored("[*] Status Codes".ljust(20, " "),
+                          'light_red'), ":", f"All Status Codes")
+
+        if self.filter_size:
+            print(colored("[*] Filter Response Size".ljust(20, " "), 'light_red'),
+                  ":", f"{self.filter_size}")
+        print("-" * 80)
+        print("-" * 80)
+        
+        
 if __name__ == "__main__":
     
     arguments = get_args()
