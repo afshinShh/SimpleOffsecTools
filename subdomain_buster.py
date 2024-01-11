@@ -142,13 +142,51 @@ class SubdomainBruteforcer:
                 self.print_data(status_code, response_length, url, title)
     
     def make_request(self, url):
-        pass
+        session = requests.Session()
+        session.headers.update(self.headers)
+        response = session.get(url, allow_redirects=self.follow_redirect, timeout=1)
+        return response
     
     def is_match(self, status_code, response_length):
-        pass
+        status_code = str(status_code)
+        response_length = str(response_length)
+        
+        if self.match_codes and status_code not in self.match_codes:
+            return False
+
+        if self.filter_codes and status_code in self.filter_codes:
+            return False
+
+        if self.match_size and response_length not in self.match_size:
+            return False
+
+        if self.filter_size and response_length in self.filter_size:
+            return False
+
+        return True
     
     def print_data(self, status_code, response_length, url, title):
-        pass
+        status_code = int(status_code)
+        color = 'grey'
+        if 200 <= status_code < 300:
+            color = 'green'
+        elif 300 <= status_code < 400:
+            color = 'yellow'
+        elif 400 <= status_code < 500:
+            color = 'red'
+        elif 500 <= status_code < 600:
+            color = 'magenta'
+        
+        status_code_str = str(status_code).ljust(9, " ")
+        response_length_str = str(response_length).ljust(9)
+        url_str = url.ljust(30)
+        
+        output = f"{colored(status_code_str, color)} {response_length_str} {url_str}"
+        
+        if not self.hide_title and title:
+            output += f" [{title}]"
+            
+        print()
     
 if __name__ == "__main__":
     
