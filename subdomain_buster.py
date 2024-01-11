@@ -105,7 +105,23 @@ class SubdomainBruteforcer:
                   ":", f"{self.filter_size}")
         print("-" * 80)
         print("-" * 80)
-        
+    
+    def main(self):
+        for _ in range(self.threads):
+            thread = Thread(target=self.get_subdomain)
+            thread.daemon = True
+            thread.start()
+            
+            with open(self.wordlist, 'r') as f:
+                self.subdomains.extend(f.read().strip().splitlines())
+                
+                
+            for subdomain in self.subdomains:
+                self.q.put(subdomain)
+            self.q.join()
+    
+    def get_subdomain(self):
+        pass        
         
 if __name__ == "__main__":
     
