@@ -121,8 +121,35 @@ class SubdomainBruteforcer:
             self.q.join()
     
     def get_subdomain(self):
-        pass        
-        
+        while True:
+            subdomain = self.q.get()
+            self.sub_brute(subdomain)
+            self.q.task_done()        
+    
+    def sub_brute(self, subdomain):
+        try:
+            url = f"https://{subdomain}.{self.target}"
+            response = self.make_request(url)
+        except:
+            pass
+        else:
+            response_length = len(response.text)
+            status_code = response.status_code
+            soup = BeautifulSoup(response.text, 'html.parser')
+            title = soup.title.string if soup.title else []
+            
+            if self.is_match(status_code, response_length):
+                self.print_data(status_code, response_length, url, title)
+    
+    def make_request(self, url):
+        pass
+    
+    def is_match(self, status_code, response_length):
+        pass
+    
+    def print_data(self, status_code, response_length, url, title):
+        pass
+    
 if __name__ == "__main__":
     
     arguments = get_args()
