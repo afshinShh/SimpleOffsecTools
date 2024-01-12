@@ -4,7 +4,17 @@ from sys import exit
 from termcolor import colored
 
 def bruteforcer(pdfFile, wordlistFile):
-    pass
+    passwords = []
+    
+    with open(wordlistFile,'r') as f:
+        for password in f.readlines():
+            passwords.append(password.strip())
+    
+    reader = PdfFileReader(pdfFile)
+    for password in passwords:
+        if str(reader.decrypt(password)) == 'PasswordType.OWNER_PASSWORD':
+            print(colored(f"[+] Password Found: {password}", 'green', attrs=['bold']))
+            return password
 
 def decrypt_pdf(encrypted_file, decrypted_file_name, password):
     pass
