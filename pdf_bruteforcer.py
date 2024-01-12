@@ -17,7 +17,16 @@ def bruteforcer(pdfFile, wordlistFile):
             return password
 
 def decrypt_pdf(encrypted_file, decrypted_file_name, password):
-    pass
+    with open(encrypted_file, 'rb') as encryptedFile, open(decrypted_file_name, 'wb') as decryptedFile:
+        reader = PdfFileReader(encryptedFile)
+        if reader.is_encrypted:
+            reader.decrypt(password)
+            
+        writer = PdfFileWriter()
+        for i in range(reader.getNumPages()):
+            writer.addPage(reader.getPage(i))
+        writer.write(decryptedFile)
+    print(colored(f"[+] File has been successfully Decrypted and Saved at: {decrypted_file_name}", 'cyan', attrs=['bold']))
 
 if __name__ == "__main__":  
     pdfFile = input("Enter the location of the password protected pdf file: ") 
